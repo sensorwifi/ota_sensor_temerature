@@ -1,0 +1,1 @@
+print("zamiast gita")
