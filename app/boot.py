@@ -154,7 +154,7 @@ def ota():
  try:
    print("try")
    from app.ota_updater import OTAUpdater
-   o = OTAUpdater('https://github.com/sensorwifi/ota_door_temperature', main_dir='app', headers={'Authorization': 'token {}'.format(token)})
+   o = OTAUpdater('https://github.com/sensorwifi/ota_sensor_temerature', main_dir='app') # headers={'Authorization': 'token {}'.format(token)})
    
    th.start_new_thread(blink, ())
    o.install_update_if_available()
