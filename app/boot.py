@@ -4,7 +4,7 @@ try:
   print("1 imported")
   boot()
 except:
-  print("1 Run from boot in app")
+  print("ota Run from boot in app")
 import esp32
 import os
 import time
@@ -20,8 +20,7 @@ try:
   import usocket as socket
 except:
   import socket
-#958903C06C9AF5185C7092627E 
-print("Ver111111111111sion")
+
 
 blink_running = True
 led = machine.Pin(0, machine.Pin.OUT)
@@ -69,8 +68,8 @@ T_VPIN = 3
 H_VPIN = 4
 
 dht22 = dht.DHT22(machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP))
-dht22.measure()
-print("TEMPERATURA: ",dht22.temperature())
+#dht22.measure()
+#print("TEMPERATURA: ",dht22.temperature())
 timer.init(period=100000, mode=machine.Timer.PERIODIC, callback=handleInterrupt)
 
 state = machine.disable_irq()
@@ -121,8 +120,7 @@ else:
          print("Could not initialize the network connection.")
          while True:
              pass
-              #pass  # you shall not pass <img draggable="false" role="img" class="emoji" alt="😀" src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/svg/1f600.svg" scale="0">
-              # Main Code goes here, wlan is a working network.WLAN(STA_IF) instance.
+              
     print("ESP OK")
     try:
       from ntptime import settime
@@ -194,7 +192,7 @@ def hall_100(hall):
 
 def hall_10():
   #import webrepl_setup
-  print("Alert 10  - webrlp ")
+  print("Alert 10  - ota()")
   # webrepl.start()
   ota()
   #webrepl.start(password='wifisensor')
@@ -320,5 +318,5 @@ while True:
  else:
   pass
   
- 
+ break
 #machine.enable_irq(state)
