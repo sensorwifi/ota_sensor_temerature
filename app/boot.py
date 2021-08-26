@@ -68,9 +68,12 @@ T_VPIN = 3
 H_VPIN = 4
 
 dht22 = dht.DHT22(machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP))
-#dht22.measure()
-#print("TEMPERATURA: ",dht22.temperature())
-timer.init(period=100000, mode=machine.Timer.PERIODIC, callback=handleInterrupt)
+try:
+ dht22.measure()
+ print("TEMPERATURA: ",dht22.temperature())
+except:
+ print("No DHT22")
+  timer.init(period=100000, mode=machine.Timer.PERIODIC, callback=handleInterrupt)
 
 state = machine.disable_irq()
 machine.enable_irq(state)
@@ -142,22 +145,22 @@ else:
       # first 0 = week of year
       # second 0 = milisecond
       rtc.datetime((year, month, mday, 0, hour, minute, second, 0))
-      print (mday)
+      print("Local time after synchronization：%s" %str(time.localtime()))
     except:
       print("no time-----------")
-      print("Local time after synchronization：%s" %str(time.localtime()))
+      
     
 #958903C06C9AF5185C7092627E
 def ota():
  try:
-   print("try")
+   print("tring ota")
    from app.ota_updater import OTAUpdater
    o = OTAUpdater('https://github.com/sensorwifi/ota_sensor_temerature', main_dir='app') # headers={'Authorization': 'token {}'.format(token)})
    
    th.start_new_thread(blink, ())
-   o.install_update_if_available()
+   #o.install_update_if_available()
    old,now=o._check_for_new_version()
-   sleep(5)
+   #sleep(5)
    
    if old==now:
     
