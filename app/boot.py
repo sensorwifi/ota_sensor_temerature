@@ -1,10 +1,3 @@
-try:
-  print("1 run app/boot")
-  import app.boot as boot
-  print("1 imported")
-  boot()
-except:
-  print("ota Run from boot in app")
 import esp32
 import os
 import time
