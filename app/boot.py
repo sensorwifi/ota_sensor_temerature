@@ -66,7 +66,7 @@ try:
  print("TEMPERATURA: ",dht22.temperature())
 except:
  print("No DHT22")
-  timer.init(period=100000, mode=machine.Timer.PERIODIC, callback=handleInterrupt)
+timer.init(period=100000, mode=machine.Timer.PERIODIC, callback=handleInterrupt)
 
 state = machine.disable_irq()
 machine.enable_irq(state)
