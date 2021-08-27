@@ -14,7 +14,11 @@ try:
   import usocket as socket
 except:
   import socket
+import machine
+from app.sgp40 import SGP40
 
+i2c = machine.I2C(1, scl = machine.Pin(22), sda = machine.Pin(21), freq = 400000)
+sgp40 = SGP40(i2c, 0x59)
 
 blink_running = True
 led = machine.Pin(0, machine.Pin.OUT)
@@ -315,5 +319,6 @@ while True:
  else:
   pass
   
+ print(sgp40.measure_raw())
  break
 #machine.enable_irq(state)
