@@ -15,16 +15,17 @@ try:
   import usocket as socket
 except:
   import socket
-import machine
-from app.sgp40 import SGP40
 
+from app.sgp40 import SGP40
+import sht40
 i2c = machine.I2C(1, scl = machine.Pin(22), sda = machine.Pin(21), freq = 400000)
 sgp40 = SGP40(i2c, 0x59)
+sht=sht40.SHT40(i2c)
 
 blink_running = True
 led = machine.Pin(0, machine.Pin.OUT)
 token='a28e01a320c3aa3e608bed62df9ec1b10ea2c9a5'
-influxdb = 'http://51.83.131.18:8086/write?db=sensor1'
+influxdb = 'http://51.68.139.56:8086/write?db=sht_40_test'
 location='pokoj'
 position='biurko'
 
@@ -91,28 +92,12 @@ def do_connect():
 if machine.reset_cause() == machine.DEEPSLEEP_RESET:
     print('woke from a deep sleep')
     
-    f=open('wifi.dat')
-    wifidat=f.read()
+    #f=open('wifi.dat')
+    #wifidat=f.read()
     #ssid, password, api = wifidat.strip("\n").split(";")
-    ssid, password = wifidat.strip("\n").split(";")
-    api='kuIJiro2nbF9Ny-P54nU2XAcsJsIcmXz'
-    print(api)
-    if len(api)<=10:
-      print("Connecting to Blynk server...",api)
-      do_connect()
-      try:
-        import app.blynk_mp as blynklib
-        try:
-         blynk = blynklib.Blynk(api)
-    # return  wlan_sta if connected else None
-        except:
-
-         print("BAD BLYNK:")
-      except:
-        print ("brak blink")   
-    else:
-      do_connect()
-      print("+++TYLO WIFI++++") 
+    #ssid, password = wifidat.strip("\n").split(";")
+    do_connect()
+    print("+++TYLO WIFI++++") 
       
 else:
     print('power on or hard reset')
@@ -228,27 +213,28 @@ def read_handler(vpin):
         blynk.set_property(H_VPIN, 'color', ERR_COLOR)
 
 def influx():
-  try:
-    try:
-        dht22.measure()
-        temperature = dht22.temperature()
-        humidity = dht22.humidity()
-        print("dhtok",temperature)
-    except OSError as o_err:
-        print("Unable to get DHT22 sensor data: '{}'".format(o_err))
-    fields = (u'sensors,',
+  temperature,humidity=sht.measure_temp_rh()
+  print("dhtok",temperature)
+ # try:
+  #  try:
+  #  temperature , humidity = sht.measure_temp_rh_raw()
+   # print("dhtok",temperature)
+   # except OSError as o_err:
+    #    print("Unable to get DHT22 sensor data: '{}'".format(o_err))
+  fields = (u'sensors,',
                   u'location={location}'.format(location=location),
                   u',position={position}'.format(position=position),
                   u' ',
                   u'temperature={temp}'.format(temp=temperature),
                   u',humidity={humidity}'.format(humidity=humidity))
-    point = ''.join(fields)
-    response = urequests.post(influxdb,
+  point = ''.join(fields)
+  print(point)
+  response = urequests.post(influxdb,
                                   data=point)
-    response.close()
-    print('Submitted :{}'.format(point))
-  except:
-        print('no minflux') 
+  response.close()
+  print('Submitted :{}'.format(point))
+  #except:
+   #     print('no minflux') 
         
 def conect_blynk():
   try:
@@ -278,10 +264,12 @@ def conect_blynk():
       print("no blynk import")
   
   
-
+#do_connect() 
   
 while True:
  #print(p13)
+ #temperature,humidity = sht.measure_temp_rh_raw()
+ #print(temperature)
  if p13.value()==1:
   alarm=True
  else:
@@ -307,9 +295,9 @@ while True:
   conect_blynk()
  except:
    print("NO BLYNK")
- 
- reed = machine.Pin(13, mode = machine.Pin.IN, pull = machine.Pin.PULL_DOWN)
- reed.irq(trigger=machine.Pin.WAKE_LOW, wake=machine.DEEPSLEEP)
+ alarm=True
+ #reed = machine.Pin(13, mode = machine.Pin.IN, pull = machine.Pin.PULL_DOWN)
+ #reed.irq(trigger=machine.Pin.WAKE_LOW, wake=machine.DEEPSLEEP) 
 
  print("I go slepp")
  
@@ -321,5 +309,6 @@ while True:
   pass
   
  print(sgp40.measure_raw())
- break
+ #break
+ alarm=True
 #machine.enable_irq(state)
